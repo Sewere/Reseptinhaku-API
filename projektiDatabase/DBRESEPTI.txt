@@ -1,0 +1,10 @@
+INSERT INTO reseptit(nimi,resepti,vegaaninen,laktoositon,gluteeniton)
+VALUES
+("juustokeitto", "https://www.k-ruoka.fi/reseptit/juustokeitto",0,0,0),
+("mämmikeksit", "https://www.k-ruoka.fi/reseptit/mammicookiet",0,0,0),
+("suklaamousse", "https://www.k-ruoka.fi/reseptit/suklaamousse",0,0,0),
+("kasvisvoileipäkakku", "https://www.k-ruoka.fi/reseptit/kasvisvoileipakakku",0,0,0),
+("täytetty-lihamureke", "https://www.valio.fi/reseptit/taytetty-lihamureke/",0,0,0),
+("kalastajan-keitto", "https://www.valio.fi/reseptit/kalastajan-keitto/",0,0,0),
+("lasagne", "https://www.valio.fi/reseptit/helppo-lasagne/",0,0,0),
+("laskiaispullat", "https://www.valio.fi/reseptit/laskiaispullat---resepti/",0,0,0);
