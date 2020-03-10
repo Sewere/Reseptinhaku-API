@@ -22,7 +22,6 @@ async function insertAinekset(ainekset) {
             console.log(item+" on jo tietokannassa.");
         }
         // console.log(id.insertId);
-        
     }
     
     return idt;
@@ -94,9 +93,6 @@ async function getReseptit(){
     // console.log(reseptiLista);
     return reseptiLista;
 }
-
-let resepti = {"ainekset":['vesi','peruna'], 
-    "rajaukset":['pieru','sipuli'], "erityis":{"vegaaninen":0,"laktoositon":1, "gluteeniton":1}};
 
 async function getReseptiKriteerein(kriteerit){
     let reseptiLista;
