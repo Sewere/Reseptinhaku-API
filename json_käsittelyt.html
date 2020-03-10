@@ -9,14 +9,14 @@
 <div class="aineet" id="hakukysely">
     <h1>Syötä ainesosat</h1>
 
-    <div id="ainesosahaku">
-        <label>Ainesosan nimi</label>
-        <input type="text" id="ainesosa" name="Ainesosan nimi"/>
+    <div autocomplete="off" class="autocomplete" style="width:300px;"></div>
+        <input type="text" id="r-aineInput" name="raaka-aine" placeholder="Lisää raaka-aine">
         <button id="lisääaines" onclick="lisaaAines()">Lisää</button>
     </div>
     <div id="aineslista">
-
     </div>
+
+
 
     <input onclick="haeAinesosilla()" type="button" value="Hae ainesosilla" id="submit">
 </div>
