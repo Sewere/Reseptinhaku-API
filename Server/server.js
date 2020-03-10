@@ -8,10 +8,11 @@ var con = mysql.createConnection({
 });
 var express = require('express');
 var app = express();
+const db = require('./database.js');
 
 //-----------------------REST-KÄSITTELYT---------------------
 //---GET-Resepti---
-app.get('/haku/', function(req, res){
+app.get('/haku/', async function(req, res){
     let kysely = req.query;
     console.log("Koko kysely:");
     console.log(kysely);
@@ -55,7 +56,7 @@ app.get('/haku/', function(req, res){
     if(rajausLista != null){
         var lista = rajausLista.split(",");
         var nro = lista.length-1;
-        SQLhaku += '"rajakset":[';
+        SQLhaku += '"rajaukset":[';
         for(var a in lista){
             SQLhaku += '"'+lista[a];
             if(a == nro){
@@ -98,9 +99,24 @@ app.get('/haku/', function(req, res){
     console.log("SQL-hakukyselyn vimmeinen muoto ennen JSONointia");
     console.log(SQLhaku);
     var jsonKysely = JSON.parse(SQLhaku);
-    console.log(jsonKysely);
-    res.send(jsonKysely);
+    console.log("TESTI");
+    console.log(jsonKysely.rajaukset)
+    let SQLtulos = await db.getReseptiKriteerein(jsonKysely);
+    res.send(SQLtulos);
 
+});
+app.get('/haku/reseptit', async function(req, res){
+    let SQLtulos = await db.getReseptit();
+    res.send(SQLtulos);
+});
+app.get('/haku/ainekset', async function(req, res){
+    let SQLtulos = await db.getAinekset(null);
+    res.send(SQLtulos);
+});
+app.post('/lisaa/', async function(req, res){
+    let asd = req.body;
+    console.log(asd);
+    console.log(asd.nimi);
 });
 
 //Tää on täällä ettei tarttis enää nähdä tätä
