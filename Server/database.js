@@ -98,7 +98,13 @@ async function getReseptiKriteerein(kriteerit){
     let reseptiLista;
     try {
         // Haetaan ainekset nimien perusteella
-        let ainekset = await getAinekset(kriteerit.ainekset);
+        let ainekset;
+        try {
+            ainekset = await getAinekset(kriteerit.ainekset);
+            console.log("Ainekset haettu");
+        } catch (err) {
+            console.log('Aineksien haku epäonnistui');
+        }
         let aIdt = [];
 
         // Aineksien ID:t listaan
@@ -108,31 +114,71 @@ async function getReseptiKriteerein(kriteerit){
         console.log(aIdt);
 
         // Haetaan rajaukset nimien perusteella
-        let rajaukset = await getAinekset(kriteerit.rajaukset);
+        let rajaukset = null;
         let rajaIdt = [];
-
-        // Rajauksien ID:t listaan
-        for (let item of rajaukset){
-            rajaIdt.push(item.AinesosaId);
+        try {
+            rajaukset = await getAinekset(kriteerit.rajaukset);
+            console.log("Rajaukset haettu.");
+            // Rajauksien ID:t listaan
+            for (let item of rajaukset){
+                rajaIdt.push(item.AinesosaId);
+            }
+            console.log(rajaIdt);
+        } catch (err) {
+            console.log("Rajauksien haku epäonnistui.");
+            rajaukset = null;
         }
-        console.log(rajaIdt);
 
-        // Haetaan aineksiin linkitetyt reseptit poislukien rajaukset
-        let kuuluuUrl = 'SELECT * FROM kuuluu WHERE kuuluu.Aid IN (?) AND kuuluu.Aid NOT IN (?)';
-        let kuuluu = await query(kuuluuUrl, [aIdt, rajaIdt]);
+        // console.log("rajaukset"+rajaIdt);
+        
+        // Haetaan aineksiin linkitetyt reseptit joissa haluttuja raaka-aineita
+        let kuuluuUrlHalutut = 'SELECT * FROM kuuluu WHERE kuuluu.Aid IN (?)';
+        let kuuluu = await query(kuuluuUrlHalutut, [aIdt]);
+        console.log("Halutut linkit haettu");
+
         let rIdt = [];
 
-        // reseptien ID:t listaan
+        // Haluttujen reseptien ID:t listaan
         for (let item of kuuluu){
             rIdt.push(item.Rid);
         }
+        console.log(rIdt);
+        
+        let rIdtRajatut = [];
+        let kuuluuRajatut;
 
+        // Jos rajauksia on löytynyt haetaan niiden linkitykset
+        if (rajaukset !== null && rajaIdt.length > 0){
+            let kuuluuUrlRajatut = 'SELECT * FROM kuuluu WHERE kuuluu.Aid IN (?)';
+            kuuluuRajatut = await query(kuuluuUrlRajatut, [rajaIdt]);
+            console.log("Rajatut linkit haettu");
+
+            // Rajatut Idt listaan
+            for (let item of kuuluuRajatut){
+                rIdtRajatut.push(item.Rid);
+            }
+            console.log(rIdtRajatut);
+
+            // Filteröidään haetuista reseptiID:stä pois rajauksien resepti ID:t
+            rIdt = rIdt.filter( function( el ) {
+                return !rIdtRajatut.includes( el );
+            });
+            console.log("Rajaukset poistettu.");
+            console.log(rIdt);
+        } 
+        
+        // console.log(kuuluu);
+        // Jos reseptejä jäi jäljille rajattujen reseptien poiston jälkeen haetaan nämä reseptit
+        if (rIdt.length > 0){
         // Haetaan reseptit ID:n perusteella joissa erityisruokavalio kriteerit täyttyvät
-        let reseptiUrl = 'SELECT * FROM reseptit WHERE reseptit.ReseptiId IN (?) AND reseptit.Vegaaninen IN (?) '+
+            let reseptiUrl = 'SELECT * FROM reseptit WHERE reseptit.ReseptiId IN (?) AND reseptit.Vegaaninen IN (?) '+
         'AND reseptit.Laktoositon IN (?) AND reseptit.Gluteeniton IN (?)';
-        reseptiLista = await query(reseptiUrl, [rIdt, kriteerit.erityis.vegaaninen, 
-            kriteerit.erityis.laktoositon, kriteerit.erityis.gluteeniton]);
 
+            reseptiLista = await query(reseptiUrl, [rIdt, kriteerit.erityis.vegaaninen, 
+                kriteerit.erityis.laktoositon, kriteerit.erityis.gluteeniton]);
+        } else {
+            console.log("Kriteereihin sopivia reseptejä ei löytynyt");
+        }
     } catch (err) {
         console.log('Reseptien haku epäonnistui.');
     }
