@@ -106,17 +106,23 @@ app.get('/haku/', async function(req, res){
 
 });
 app.get('/haku/reseptit', async function(req, res){
+    res.header("Access-Control-Allow-Origin", "*");
     let SQLtulos = await db.getReseptit();
     res.send(SQLtulos);
 });
 app.get('/haku/ainekset', async function(req, res){
+    res.header("Access-Control-Allow-Origin", "*");
     let SQLtulos = await db.getAinekset(null);
     res.send(SQLtulos);
 });
 app.post('/lisaa/', async function(req, res){
+    res.header("Access-Control-Allow-Origin", "*");
     let asd = req.body;
     console.log(asd);
     console.log(asd.nimi);
+
+    let resepti = {"resepti":{"nimi":"perunatesti420", "resepti":"www.google.com/perunatesti420", "vegaaninen":1,"laktoositon":1, "gluteeniton":1},
+    "ainekset":['vesi','peruna', 'kivi', 'sieni']};
 });
 
 //Tää on täällä ettei tarttis enää nähdä tätä
