@@ -62,7 +62,6 @@ VALUES
 ('kananmuna'),
 ('mämmi'),
 ('voi'),
-('leivontasuklaa'),
 ('vehnäjauho'),
 ('fariinisokeri'),
 ('sokeri'),
