@@ -76,3 +76,21 @@ testi();
 // insertResepti(resepti)
 // insertAinekset(ainekset);
 // getAinekset();
+
+
+var util = require('util');
+const query = util.promisify(con.query).bind(con);
+
+let ainekset = ['lohi', 'silakka'];
+
+async function insertAinekset(ainekset) {
+    let idt = [];
+    
+    for (let item of ainekset){
+        const id = await query("INSERT INTO ainesosat(nimi) VALUES ('"+item+"');");
+        console.log(id.insertId);
+        idt.push(id.insertId);
+    }
+    
+    return idt;
+}
