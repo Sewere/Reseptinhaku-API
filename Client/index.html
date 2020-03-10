@@ -7,12 +7,21 @@
 <body>
 
 <div class="aineet" id="hakukysely">
-    <h1>Syötä ainesosat</h1>
+    <h1>Resepti sisältää</h1>
     <div autocomplete="off" class="autocomplete" style="width:300px;"></div>
-        <input type="text" id="r-aineInput" name="raaka-aine" placeholder="Lisää raaka-aine">
+        <input onkeypress="return /[a-ö]/i.test(event.key)" type="text" id="r-aineInput" name="raaka-aine" maxlength="25" placeholder="Lisää raaka-aine">
         <button id="lisääaines" onclick="lisaaAines()">Lisää</button>
     </div>
     <div id="valitut-ainekset">
+</div>
+
+<div class="rajaus" id="rajaus">
+    <h1>Resepti ei sisällä</h1>
+    <div autocomplete="off" class="autocomplete" style="width:300px;"></div>
+        <input onkeypress="return /[a-ö]/i.test(event.key)" type="text" id="rajaus-input" name="rajattu-aine" maxlength="25" placeholder="Lisää raaka-aine">
+        <button id="lisäärajaus" onclick="rajaaAines()">Lisää</button>
+    </div>
+    <div id="rajatut-ainekset">
 </div>
 
 <div>
