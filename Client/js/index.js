@@ -8,6 +8,7 @@ function haeAinesosilla(){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log("tähän myöhemmin jotai kivaa");
+
         }
     };
     var laktoositon = document.getElementById("erikois1").checked;
@@ -41,8 +42,7 @@ function haeAinesosilla(){
         hakuURL = hakuURL + "rajaus=" + URLrajatut + "&";
     }
 
-    console.log("koko haku URL:");
-    console.log(hakuURL);
+    console.log("koko haku URL: " + hakuURL);
 
     xhttp.open("GET", hakuURL, true);
     xhttp.send();
@@ -136,22 +136,22 @@ function autocomplete(inp, arr) {
     });
 }
 
-var raakaAineet = ['rosmariini','vesi','riistafondi','mustaherukkahyytelö','banaanisalottisipuli','selleri',
-    'oliiviöljy','kasvisfondi','sulatejuusto','valkoviini','punaviini','kuohukerma','herne','mustapippuri','kananmuna',
-    'mämmi','voi','leivontasuklaa','vehnäjauho','fariinisokeri','sokeri'];
-
+var raakaAineet = [];
+var raakaAineet2 = [];
 window.onload = function() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-         
-            console.log(xhttp.responseText);
+            var raakaAineJSON = JSON.parse(xhttp.responseText);
+            for(var i = 0; i<raakaAineJSON.length; i++){
+                raakaAineet.push(raakaAineJSON[i].Nimi);
+            }            
         }
     };
     xhttp.open("GET", "http://localhost:8081/haku/ainekset", true);
     xhttp.send();
-   
 };
+
 
 autocomplete(document.getElementById("r-aineInput"), raakaAineet);
 autocomplete(document.getElementById("rajaus-input"), raakaAineet);
