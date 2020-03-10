@@ -9,49 +9,122 @@ var con = mysql.createConnection({
 var express = require('express');
 var app = express();
 
-
 //-----------------------REST-KÄSITTELYT---------------------
 //---GET-Resepti---
 app.get('/haku/', function(req, res){
-    console.log("GETTII pyydetty");
-    var nimi = req.query.name;
-    var ainesHakuSQL = "";
-    var hakuKysely = "SELECT reseptit.resepti"
-        + " FROM Reseptit"
-        + " WHERE reseptit.nimi IN (?)";
+    let kysely = req.query;
+    console.log("Koko kysely:");
+    console.log(kysely);
 
-    //---Hakusanojen taltiointi ja kyselyt-----------TÄLLÄ HETKELLÄ MONELLA NIMELLÄ HAKEMINEN TOIMII---------
-    const nimiLista = req.query["nimi"];
-    // nimi Get: http://localhost:8081/haku?nimi=juustokeitto&nimi=suklaamousse
+    //---Hakusanojen taltiointi ja kyselyt----------
+        // aines Get: http://localhost:8081/haku?aine=kurkku,sieni
     const ainesLista = req.query["aines"];
-    // aines Get: http://localhost:8081/haku?
+        // erityis Get: http://localhost:8081/haku?rajaus=
     const rajausLista = req.query["rajaus"];
+        // erityis Get: http://localhost:8081/haku?erityis=laktoositon,vegaaninen
     const erityisLista = req.query["erityis"];
-    // erityis Get: http://localhost:8081/haku?erityis=laktoositon&erityis=vegaaninen
+        //yhdiste GET: http://localhost:8081/haku?erityis=laktoositon&aines=porkkana,peruna
 
-    console.log(req.query);
-    console.log(nimiLista);
-    console.log(ainesLista);
-    console.log(erityisLista);
-    console.log(rajausLista);
+    //---Katotaan mitä hakukriteerejä löytyy ja yhdistetään niistä JSON tietokannalle
+    let SQLhaku = "{";
+    //AINESOSILLA
+    if(ainesLista != null){
+        console.log("Ainesosat: "+ainesLista);
+        var lista = ainesLista.split(",");
+        var nro = lista.length-1;
+        SQLhaku += '"ainekset":[';
+        for(var a in lista){
+            SQLhaku += '"'+lista[a];
+            if(a == nro){
+                console.log("Vika listan jäsen")
+                SQLhaku += '"], ';
+            }
+            else{
+                SQLhaku += '",';
+            }
+        }
+        console.log("SQL");
+        console.log(SQLhaku);
+    }
+    else{
+        console.log("Ei aineksia valittu");
+        SQLhaku += '"ainekset": null, ';
+    }
+    //RAJAAVAT AINESOSAT
+    if(rajausLista != null){
+        var lista = rajausLista.split(",");
+        var nro = lista.length-1;
+        SQLhaku += '"rajakset":[';
+        for(var a in lista){
+            SQLhaku += '"'+lista[a];
+            if(a == nro){
+                SQLhaku += '"], ';
+            }
+            else{
+                SQLhaku += '",';
+            }
+        }
+        console.log("SQL");
+        console.log(SQLhaku);
 
+        //{"ainekset":['porkkana'], "rajaukset":['pieru','sipuli'], "erityis":{"vegaaninen":0,"laktoositon":1, "gluteeniton":1}};
+    }
+    else{
+        SQLhaku += '"rajaukset": null, ';
+        console.log(SQLhaku);
+    }
+    //ERITYISRUOKAVALIO
     if (erityisLista != null) {
         console.log("Erityisruokavalio: "+erityisLista);
-    //    hakuKysely = "SELECT reseptit.resepti"
-    //        + " FROM Reseptit"
-    //        + " WHERE reseptit.nimi IN (?)"
-    //        + " AND ";
-        //Pitää varmaan muuttaa tietokantaan niin et erityisruokavalio on vaan yks kenttä kolmella eri arvolle
-        //niin saa tästä kyselystä paljon helpomman eikä tartte kaivaa kyselystä mikä erikoisruokavalio on valittu.
+        var lista = erityisLista.split(",");
+        SQLhaku += '"erityis":{';
+        var veg = false, lak = false, glut = false;
+        //Tarkastetaan mitä erityisruokavalioita on valittu
+        for(var a in lista){
+            if(lista[a] == 'vegaaninen'){
+                veg = true;}
+            if(lista[a] == 'laktoositon'){
+                lak = true;}
+            if(lista[a] == 'gluteeniton'){
+                glut = true;}
+        }
+        SQLhaku += getErityisruokavalioText(veg, lak, glut);
     }
+    else{
+        SQLhaku += '"erityis":{"vegaaninen":0,"laktoositon":0, "gluteeniton":0}}';
+        console.log(SQLhaku);
+    }
+    console.log("SQL-hakukyselyn vimmeinen muoto ennen JSONointia");
+    console.log(SQLhaku);
+    var jsonKysely = JSON.parse(SQLhaku);
+    console.log(jsonKysely);
+    res.send(jsonKysely);
 
-    con.query(hakuKysely, [nimiLista], function (err, result) {
-        if (err) throw err;
-        console.log("SQL hakutulos:");
-        console.log(result);
-        res.send(result);
-    });
 });
+
+//Tää on täällä ettei tarttis enää nähdä tätä
+function getErityisruokavalioText(vegaani, laktoositon, gluteeniton){
+    let palaute = "";
+    if (vegaani){
+        palaute += '"vegaaninen":1,';
+    }
+    else{
+        palaute += '"vegaaninen":0,';
+    }
+    if (laktoositon){
+        palaute += '"laktoositon":1,';
+    }
+    else{
+        palaute += '"laktoositon":0,';
+    }
+    if (gluteeniton){
+        palaute += '"gluteeniton":1}}';
+    }
+    else{
+        palaute += '"gluteeniton":0}}';
+    }
+    return palaute;
+}
 
 var server = app.listen(8081, function () {
     var host = server.address().address;
