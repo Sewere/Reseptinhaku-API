@@ -21,6 +21,7 @@ app.get('/haku/', async function(req, res){
     let jsonKysely = kyselynMuodostus(ainesLista, rajausLista, erityisLista);
     let SQLtulos = await db.getReseptiKriteerein(jsonKysely);
     console.log("SQL Hakutulokset:");
+    console.log(SQLtulos);
     res.send(SQLtulos);
 });
 //GET kaikki reseptit
@@ -122,10 +123,10 @@ function kyselynMuodostus(ainesLista, rajausLista, erityisLista){
         SQLhaku += '"erityis":{"vegaaninen":0,"laktoositon":0, "gluteeniton":0}}';
         console.log(SQLhaku);
     }
-    console.log("SQL-hakukyselyn viimeinen muoto ennen JSONointia");
-    console.log(SQLhaku);
+    //console.log("SQL-hakukyselyn viimeinen muoto ennen JSONointia");
+    //console.log(SQLhaku);
     var jsonKysely = JSON.parse(SQLhaku);
-    console.log("Jsonoitu muoto");
+    console.log("Jsonoitu muoto hakukysely");
     console.log(jsonKysely);
     return jsonKysely;
 }
