@@ -15,6 +15,7 @@ app.get('/haku/', function(req, res){
     let kysely = req.query;
     console.log("Koko kysely:");
     console.log(kysely);
+    res.header("Access-Control-Allow-Origin", "*");
 
     //---Hakusanojen taltiointi ja kyselyt----------
         // aines Get: http://localhost:8081/haku?aine=kurkku,sieni
