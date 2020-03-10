@@ -125,17 +125,20 @@ async function getReseptiKriteerein(kriteerit){
         // Haetaan rajaukset nimien perusteella
         let rajaukset = null;
         let rajaIdt = [];
-        try {
-            rajaukset = await getAinekset(kriteerit.rajaukset);
-            console.log("Rajaukset haettu.");
-            // Rajauksien ID:t listaan
-            for (let item of rajaukset){
-                rajaIdt.push(item.AinesosaId);
+
+        if (kriteerit.rajaukset !== null){
+            try {
+                rajaukset = await getAinekset(kriteerit.rajaukset);
+                console.log("Rajaukset haettu.");
+                // Rajauksien ID:t listaan
+                for (let item of rajaukset){
+                    rajaIdt.push(item.AinesosaId);
+                }
+                console.log(rajaIdt);
+            } catch (err) {
+                console.log("Rajauksien haku epäonnistui.");
+                rajaukset = null;
             }
-            console.log(rajaIdt);
-        } catch (err) {
-            console.log("Rajauksien haku epäonnistui.");
-            rajaukset = null;
         }
 
         // console.log("rajaukset"+rajaIdt);
