@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 
+// Luodaan tietokantayhteys
 var con = mysql.createConnection({
     host: "localhost",
     user: "olso",
@@ -10,13 +11,15 @@ var con = mysql.createConnection({
 var util = require('util');
 const query = util.promisify(con.query).bind(con);
 
+// Funktio yrittää lisätä ainekset listan sisältämät ainekset tietokantaan yksi kerrallaan ilman linkityksiä
 async function insertAinekset(ainekset) {
     let idt = [];
     
     for (let item of ainekset){
         let id;
         try {
-            id = await query("INSERT INTO ainesosat(nimi) VALUES ('"+item+"');");
+            id = await query("INSERT INTO ainesosat (nimi) VALUES (?)", [item]);
+            console.log(item +" lisätty");
             idt.push(id.insertId);
         } catch (err){
             console.log(item+" on jo tietokannassa.");
@@ -27,28 +30,30 @@ async function insertAinekset(ainekset) {
     return idt;
 }
 
+// Lisää tietokantaan reseptin ilman linkityksiä aineksiin
 async function insertResepti(resepti){
-    let reseptiKysely = "INSERT INTO reseptit(nimi,resepti,vegaaninen,laktoositon,gluteeniton) VALUES "+
-    "('"+resepti.nimi+"','"+resepti.resepti+"','"+resepti.vegaaninen+"','"+resepti.laktoositon+"','"+resepti.gluteeniton+"');";
+    let reseptiKysely = "INSERT INTO reseptit(nimi,resepti,vegaaninen,laktoositon,gluteeniton) VALUES (?, ?, ?, ?, ?)";
     // console.log(reseptiKysely);
-    const lisattyResepti = await query(reseptiKysely);
+    const lisattyResepti = await query(reseptiKysely, [resepti.nimi, resepti.resepti, resepti.vegaaninen, 
+        resepti.laktoositon, resepti.gluteeniton]);
     // console.log(lisattyResepti.insertId);
     return lisattyResepti.insertId;
 }
 
+// Lisää reseptin tietokantaan, lisää tietokannasta puuttuvat ainekset tietoantaan, lopuksi linkittää ainekset reseptiin
 async function createResepti(reseptiAineet){
     let reseptiId;
     try {
         reseptiId = await insertResepti(reseptiAineet.resepti);
     } catch (err){
-        console.log('Resepti oli jo olemassa');
+        console.log('Resepti on jo olemassa');
         return false;
     }
     // console.log(reseptiId);
     try {
         await insertAinekset(reseptiAineet.ainekset);
     } catch (err){
-        console.log("ainakin osa aineista oli jo olemassa");
+        console.log("ainakin osa aineista on jo olemassa");
     }
 
     let ainesLista;
@@ -72,6 +77,8 @@ async function createResepti(reseptiAineet){
     return true;
 }
 
+// Hakee kaikki ainekset tietokannasta jos parametri on null, jos parametrina ainesosalista hakee vain nämä ainekset
+// Tällöin saadaan haettujen aineksien id:t. 
 async function getAinekset(haettavatAineet){
     let ainesLista;
 
@@ -88,12 +95,14 @@ async function getAinekset(haettavatAineet){
     return ainesLista;
 }
 
+// Hakee kaikki reseptit tietokannasta
 async function getReseptit(){
     const reseptiLista = await query('SELECT * FROM reseptit');
     // console.log(reseptiLista);
     return reseptiLista;
 }
 
+// Hakee reseptit annettujen kriteerien perusteella
 async function getReseptiKriteerein(kriteerit){
     let reseptiLista;
     try {
@@ -171,11 +180,28 @@ async function getReseptiKriteerein(kriteerit){
         // Jos reseptejä jäi jäljille rajattujen reseptien poiston jälkeen haetaan nämä reseptit
         if (rIdt.length > 0){
         // Haetaan reseptit ID:n perusteella joissa erityisruokavalio kriteerit täyttyvät
-            let reseptiUrl = 'SELECT * FROM reseptit WHERE reseptit.ReseptiId IN (?) AND reseptit.Vegaaninen IN (?) '+
-        'AND reseptit.Laktoositon IN (?) AND reseptit.Gluteeniton IN (?)';
+            let reseptiUrl = 'SELECT * FROM reseptit WHERE reseptit.ReseptiId IN (?)';
+            let hakukriteerit = [rIdt];
+            
+            // Lisätään erikoisruokavaliot sql hakuun tarvittaessa
+            if (kriteerit.erityis.vegaaninen === 1) {
+                reseptiUrl += ' AND reseptit.Vegaaninen IN (?)';
+                hakukriteerit.push(kriteerit.erityis.vegaaninen);
+                console.log("vege");
+            }
+            if (kriteerit.erityis.laktoositon === 1){
+                reseptiUrl += ' AND reseptit.Laktoositon IN (?)';
+                hakukriteerit.push(kriteerit.erityis.laktoositon);
+                console.log("laktoositon");
+            }
+            if (kriteerit.erityis.gluteeniton === 1){
+                reseptiUrl += ' AND reseptit.Gluteeniton IN (?)';
+                hakukriteerit.push(kriteerit.erityis.gluteeniton);
+                console.log("gluteeniton");
+            }
+            console.log(reseptiUrl);
+            reseptiLista = await query(reseptiUrl, hakukriteerit);
 
-            reseptiLista = await query(reseptiUrl, [rIdt, kriteerit.erityis.vegaaninen, 
-                kriteerit.erityis.laktoositon, kriteerit.erityis.gluteeniton]);
         } else {
             console.log("Kriteereihin sopivia reseptejä ei löytynyt");
         }
@@ -186,8 +212,6 @@ async function getReseptiKriteerein(kriteerit){
 }
 
 module.exports = {
-    insertAinekset,
-    insertResepti,
     createResepti,
     getAinekset,
     getReseptit,
