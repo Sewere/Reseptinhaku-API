@@ -14,6 +14,7 @@ var app = express();
 //---GET-Resepti---
 app.get('/haku/', function(req, res){
     console.log("GETTII pyydetty");
+    res.header("Access-Control-Allow-Origin", "*");
     var nimi = req.query.name;
     var ainesHakuSQL = "";
     var hakuKysely = "SELECT reseptit.resepti"
