@@ -42,9 +42,16 @@ app.get('/haku/ainekset', async function(req, res){
     res.send(SQLtulos);
 });
 //POST lisää
+app.use(function(req, res) {
+    res.header("Access-Control-Allow-Origin", "");
+    res.header("Access-Control-Allow-Headers", "");
+});
 app.post('/lisaa/', async function(req, res){
     res.header("Access-Control-Allow-Origin", "*");
-    let jsonPost = req.body;
+    res.header("Access-Control-Allow-Headers", "*");
+    console.log(req.body);
+    console.log(JSON.parse(req.body));
+    let jsonPost = JSON.parse(req.body);
     console.log(jsonPost);
     let tarkistettavaUrl = jsonPost.resepti.resepti;
     let veg = jsonPost.resepti.vegaaninen;

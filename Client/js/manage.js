@@ -20,12 +20,16 @@ function reseptinLisaaminen(){
     reseptiString = reseptiString.split("false").join("0");
     console.log(reseptiString);
 
+    var asd = (JSON.parse(reseptiString));
+
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log("tähän myöhemmin jotai kivaa");
 
+        } else {
+            console.log("täällä");
         }
     };
     xhttp.open("POST", "http://localhost:8081/lisaa", true);
