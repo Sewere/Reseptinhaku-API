@@ -8,7 +8,23 @@ function haeAinesosilla(){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log(this.responseText);
+            var palautuslista = JSON.parse(this.responseText);
+            var tuloslista = document.getElementById("reseptitulokset");
+            for(var i = 0; i < palautuslista.length; i++){
+                var tulosN = document.createElement("h1");
+                var tulosL = document.createElement("a");
+                tulosL.setAttribute('href' ,palautuslista[i].Resepti);
+                tulosN.innerHTML = palautuslista[i].Nimi;
+                tulosL.innerHTML = palautuslista[i].Resepti;
+                tuloslista.appendChild(tulosN);
+                tuloslista.appendChild(tulosL);
+            }
 
+        } else if(this.readyState == 4 && this.status == 400){
+            tuloslista = document.getElementById("reseptitulokset");
+            var eiloydy = document.createElement("h1");
+            eiloydy.innerHTML = "Annetuilla aineksilla ei löytynyt reseptejä";
+            tuloslista.appendChild(eiloydy);
         }
     };
     var laktoositon = document.getElementById("erikois1").checked;
@@ -49,7 +65,7 @@ function haeAinesosilla(){
 
 }
 function lisaaAines(){
-    if(document.getElementById("r-aineInput").value != ""){
+    if(document.getElementById("r-aineInput").value != "" && !hakuaineet.includes(document.getElementById("r-aineInput").value)){
         var aineslista = document.getElementById("valitut-ainekset");
         var aines = document.createElement("p");
         aines.innerHTML = document.getElementById("r-aineInput").value;
@@ -59,7 +75,7 @@ function lisaaAines(){
     }
 }
 function rajaaAines(){
-    if(document.getElementById("rajaus-input").value != ""){
+    if(document.getElementById("rajaus-input").value != "" && !rajatutaineet.includes(document.getElementById("rajaus-input").value)){
         var aineslista = document.getElementById("rajatut-ainekset");
         var aines = document.createElement("p");
         aines.innerHTML = document.getElementById("rajaus-input").value;
