@@ -1,10 +1,13 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 const db = require('./database.js');
 const validUrl = require('valid-url');
+const body_parser = require('body-parser');
+const cors = require('cors');
 
-app.use(express.json()); // for parsing application/json
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(body_parser.json()); // for parsing application/json
+app.use(body_parser.urlencoded({urlencoded:true})); // for parsing application/x-www-form-urlencoded
+app.use(cors());
 
 //-----------------------REST-KÄSITTELYT---------------------
 //---GET-Resepti-hakukriteerein--
@@ -13,7 +16,6 @@ app.get('/haku/', async function(req, res){
     let kysely = req.query;
     console.log("Koko kysely:");
     console.log(kysely);
-    res.header("Access-Control-Allow-Origin", "*");
     //---Hakusanojen taltiointi ja kyselyt----------
     const ainesLista = req.query["aines"];
     const rajausLista = req.query["rajaus"];
@@ -31,27 +33,17 @@ app.get('/haku/', async function(req, res){
 });
 //GET kaikki reseptit
 app.get('/haku/reseptit', async function(req, res){
-    res.header("Access-Control-Allow-Origin", "*");
     let SQLtulos = await db.getReseptit();
     res.send(SQLtulos);
 });
 //GET kaikki ainekset
 app.get('/haku/ainekset', async function(req, res){
-    res.header("Access-Control-Allow-Origin", "*");
     let SQLtulos = await db.getAinekset(null);
     res.send(SQLtulos);
 });
 //POST lisää
-app.use(function(req, res) {
-    res.header("Access-Control-Allow-Origin", "");
-    res.header("Access-Control-Allow-Headers", "");
-});
 app.post('/lisaa/', async function(req, res){
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "*");
-    console.log(req.body);
-    console.log(JSON.parse(req.body));
-    let jsonPost = JSON.parse(req.body);
+    let jsonPost = req.body;
     console.log(jsonPost);
     let tarkistettavaUrl = jsonPost.resepti.resepti;
     let veg = jsonPost.resepti.vegaaninen;

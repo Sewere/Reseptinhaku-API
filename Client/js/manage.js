@@ -28,12 +28,15 @@ function reseptinLisaaminen(){
         if (this.readyState == 4 && this.status == 200) {
             console.log("tähän myöhemmin jotai kivaa");
 
-        } else {
+        } else if(this.status == 400){
+            console.log("Väärä kutsutyyppi");
+        }else{
             console.log("täällä");
         }
     };
     xhttp.open("POST", "http://localhost:8081/lisaa", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
+    console.log(reseptiString);
     xhttp.send(reseptiString);
 
 }
