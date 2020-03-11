@@ -51,14 +51,14 @@ async function createResepti(reseptiAineet){
     }
     // console.log(reseptiId);
     try {
-        await insertAinekset(reseptiAineet.ainekset);
+        await insertAinekset(reseptiAineet.resepti.ainekset);
     } catch (err){
         console.log("ainakin osa aineista on jo olemassa");
     }
 
     let ainesLista;
     try {
-        ainesLista = await getAinekset(reseptiAineet.ainekset);
+        ainesLista = await getAinekset(reseptiAineet.resepti.ainekset);
     } catch (err) {
         console.log('Aineslistan haku epäonnistui');
         return false;
