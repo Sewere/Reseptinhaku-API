@@ -39,13 +39,22 @@ app.get('/haku/ainekset', async function(req, res){
 //POST lisää
 app.post('/lisaa/', async function(req, res){
     res.header("Access-Control-Allow-Origin", "*");
-    let asd = req.body;
-    console.log(asd);
-    //console.log(asd.nimi);
+    let jsonPost = req.body;
+    console.log(jsonPost);
+    let tulos = await db.createResepti(jsonPost);
+    if(tulos){
+        console.log("Resepti luotu tietokantaan!");
+        res.send(tulos);
+    }
+    else{
+        console.log("Reseptin luonti epäonnistui.");
+        res.statusCode = 404;
+        res.send(tulos);
+    }
 
-    //let resepti = {"resepti":{"nimi":"perunatesti420", "resepti":"www.google.com/perunatesti420", "vegaaninen":1,"laktoositon":1, "gluteeniton":1,
+    //Reseptin muoto
+    //{"resepti":{"nimi":"perunatesti420", "resepti":"www.google.com/perunatesti420", "vegaaninen":1,"laktoositon":1, "gluteeniton":1,
     //"ainekset":["vesi'","peruna", "kivi", "sieni"]}};
-    res.send("SSLSLSLSL");
 });
 
 var server = app.listen(8081, function () {
@@ -66,7 +75,7 @@ function kyselynMuodostus(ainesLista, rajausLista, erityisLista){
         for(var a in lista){
             SQLhaku += '"'+lista[a];
             if(a == nro){
-                console.log("Vika listan jäsen")
+                console.log("Vika listan jäsen");
                 SQLhaku += '"], ';
             }
             else{
