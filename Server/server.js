@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 const db = require('./database.js');
+const validUrl = require('valid-url');
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -22,7 +23,11 @@ app.get('/haku/', async function(req, res){
     let SQLtulos = await db.getReseptiKriteerein(jsonKysely);
     console.log("SQL Hakutulokset:");
     console.log(SQLtulos);
-    res.send(SQLtulos);
+    if (SQLtulos === undefined){
+        res.status(400).send("Reseptejä ei löytynyt.");
+    } else {
+        res.send(SQLtulos);
+    }
 });
 //GET kaikki reseptit
 app.get('/haku/reseptit', async function(req, res){
@@ -41,20 +46,30 @@ app.post('/lisaa/', async function(req, res){
     res.header("Access-Control-Allow-Origin", "*");
     let jsonPost = req.body;
     console.log(jsonPost);
-    let tulos = await db.createResepti(jsonPost);
-    if(tulos){
-        console.log("Resepti luotu tietokantaan!");
-        res.send(tulos);
-    }
-    else{
-        console.log("Reseptin luonti epäonnistui.");
-        res.statusCode = 404;
-        res.send(tulos);
-    }
+    let tarkistettavaUrl = jsonPost.resepti.resepti;
+    let veg = jsonPost.resepti.vegaaninen;
+    let lak = jsonPost.resepti.laktoositon;
+    let glut = jsonPost.resepti.gluteeniton;
 
-    //Reseptin muoto
-    //{"resepti":{"nimi":"perunatesti420", "resepti":"www.google.com/perunatesti420", "vegaaninen":1,"laktoositon":1, "gluteeniton":1,
-    //"ainekset":["vesi'","peruna", "kivi", "sieni"]}};
+    //Validoidaan reseptin url
+    if (!validUrl.isUri(tarkistettavaUrl)){
+        console.log("Reseptin url ei ole kelvollinen.");
+        res.status(400).send("Reseptin url ei ole kelvollinen.");
+    //varmistetaan, että erikoisruokavalioiden arvot ovat oikeassa muodossa.
+    } else if ((veg!==0&&veg!==1)||(lak!==0&&lak!==1)||(glut!==0&&glut!==1)) {
+        console.log("erikoisruokalavion muoto väärä");
+        res.status(400).send("Erityisruokavalioiden muoto ei kelpaa.");
+    } else {
+        let tulos = await db.createResepti(jsonPost);
+        if(tulos){
+            console.log("Resepti luotu tietokantaan!");
+            res.send("Reseptin lisätty tietokantaan.");
+        }
+        else{
+            console.log("Reseptin luonti epäonnistui.");
+            res.status(400).send("Reseptin luonti epäonnistui");
+        }
+    }
 });
 
 var server = app.listen(8081, function () {
