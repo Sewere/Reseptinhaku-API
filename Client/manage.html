@@ -9,6 +9,34 @@
 <body>
     
 
+<form action="#" onsubmit="reseptinLisaaminen();return false">
+    <label for="reseptinimi">reseptin nimi:</label><br>
+    <input type="text" id="reseptinimi" name="reseptinimi" maxlength="40" size="50"><br>
+    <label for="reseptinimi">Linkki reseptiin:</label><br>
+    <input type="text" id="reseptilinkki" name="reseptilinkki" maxlength="254" size="100"><br>
+    <input type="checkbox" id="erikois1" name="laktoositon" value="Laktoositon">
+    <label for="vehicle1"> Laktoositon</label><br>
+    <input type="checkbox" id="erikois2" name="gluteeniton" value="Gluteeniton">
+    <label for="vehicle2"> Gluteeniton</label><br>
+    <input type="checkbox" id="erikois3" name="vegaaninen" value="Vegaaninen">
+    <label for="vehicle3"> Vegaaninen</label><br>  
+
+
+    <div class="aineet" id="hakukysely">
+        <h1>Resepti sisältää</h1>
+        <div autocomplete="off" class="autocomplete" style="width:300px;"></div>
+            <input onkeypress="return /[a-ö]/i.test(event.key)" type="text" id="r-aineInput" name="raaka-aine" maxlength="25" placeholder="Lisää raaka-aine">
+            <button type="button" id="lisääaines" onclick="lisaaAines()">Lisää</button>
+        </div>
+        <div id="valitut-ainekset">
+    </div>
+    <p></p>
+    <input type="submit" value="Lisää resepti ">
+
+</form>
+
+
+
     <script src="js/manage.js"></script>
 </body>
 </html>
