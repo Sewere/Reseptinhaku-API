@@ -57,7 +57,7 @@ app.post('/lisaa/', async function(req, res){
         res.status(400).send("Reseptin url ei ole kelvollinen.");
     //varmistetaan, että erikoisruokavalioiden arvot ovat oikeassa muodossa.
     } else if ((veg!==0&&veg!==1)||(lak!==0&&lak!==1)||(glut!==0&&glut!==1)) {
-        console.log("erikoisruokalavion muoto väärä");
+        console.log("Erikoisruokavalion muoto väärä");
         res.status(400).send("Erityisruokavalioiden muoto ei kelpaa.");
     } else {
         let tulos = await db.createResepti(jsonPost);
