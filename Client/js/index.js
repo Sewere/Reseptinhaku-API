@@ -1,14 +1,32 @@
 /* eslint-disable no-unused-vars */
 var hakuaineet = [];
 var rajatutaineet = [];
+var raakaAineet = [];
 
 function haeAinesosilla(){
     console.log("Haettu");
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
+        var tuloslista = document.getElementById("reseptitulokset");
+        tuloslista.innerHTML = "";
         if (this.readyState == 4 && this.status == 200) {
             console.log(this.responseText);
+            var palautuslista = JSON.parse(this.responseText);
+            for(var i = 0; i < palautuslista.length; i++){
+                var tulosN = document.createElement("h1");
+                var tulosL = document.createElement("a");
+                tulosL.setAttribute('href' ,palautuslista[i].Resepti);
+                tulosN.innerHTML = palautuslista[i].Nimi;
+                tulosL.innerHTML = palautuslista[i].Resepti;
+                tuloslista.appendChild(tulosN);
+                tuloslista.appendChild(tulosL);
+            }
 
+        } else if(this.readyState == 4 && this.status == 400){
+            tuloslista = document.getElementById("reseptitulokset");
+            var eiloydy = document.createElement("h1");
+            eiloydy.innerHTML = "Annetuilla aineksilla ei löytynyt reseptejä";
+            tuloslista.appendChild(eiloydy);
         }
     };
     var laktoositon = document.getElementById("erikois1").checked;
@@ -26,7 +44,7 @@ function haeAinesosilla(){
     var URLerikoisuudet = (JSON.stringify(erikoislista).replace(/[[\]]|'|"/g,''));
     var URLrajatut = (JSON.stringify(rajatutaineet).replace(/[[\]]|'|"/g,''));
     console.log("Halutut ainekset: " + URLainekset);
-    console.log("EI halutut ainekset: " + URLrajatut);
+    console.log("Ei halutut ainekset: " + URLrajatut);
     console.log("Rajoitteet: " + URLerikoisuudet);
 
     var hakuURL = "http://localhost:8081/haku?";
@@ -49,23 +67,29 @@ function haeAinesosilla(){
 
 }
 function lisaaAines(){
-    if(document.getElementById("r-aineInput").value != ""){
+    if(document.getElementById("r-aineInput").value != ""
+    && !hakuaineet.includes(document.getElementById("r-aineInput").value)
+    && raakaAineet.includes(document.getElementById("r-aineInput").value)){
         var aineslista = document.getElementById("valitut-ainekset");
         var aines = document.createElement("p");
         aines.innerHTML = document.getElementById("r-aineInput").value;
         aineslista.appendChild(aines);
         console.log("Aines " + aines.innerHTML + " lisätty");
         hakuaineet.push(aines.innerHTML);
+        document.getElementById("r-aineInput").value = "";
     }
 }
 function rajaaAines(){
-    if(document.getElementById("rajaus-input").value != ""){
+    if(document.getElementById("rajaus-input").value != ""
+    && !rajatutaineet.includes(document.getElementById("rajaus-input").value)
+    && raakaAineet.includes(document.getElementById("rajaus-input").value)){
         var aineslista = document.getElementById("rajatut-ainekset");
         var aines = document.createElement("p");
         aines.innerHTML = document.getElementById("rajaus-input").value;
         aineslista.appendChild(aines);
         console.log("rajaus " + aines.innerHTML + " lisätty");
         rajatutaineet.push(aines.innerHTML);
+        document.getElementById("rajaus-input").value = "";
     }
 }
 function alphaOnly(event) {
@@ -136,8 +160,6 @@ function autocomplete(inp, arr) {
     });
 }
 
-var raakaAineet = [];
-var raakaAineet2 = [];
 window.onload = function() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {

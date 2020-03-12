@@ -8,12 +8,12 @@
 </head>
 <body>
     
-
+<h1>Syötä uusi resepti</h1>
 <form action="#" onsubmit="reseptinLisaaminen();return false">
     <label for="reseptinimi">reseptin nimi:</label><br>
-    <input type="text" id="reseptinimi" name="reseptinimi" maxlength="40" size="50"><br>
+    <input type="text" id="reseptinimi" name="reseptinimi" maxlength="40" size="50" autocomplete="off"><br>
     <label for="reseptinimi">Linkki reseptiin:</label><br>
-    <input type="text" id="reseptilinkki" name="reseptilinkki" maxlength="254" size="100"><br>
+    <input type="text" id="reseptilinkki" name="reseptilinkki" maxlength="254" size="100" autocomplete="off"><br>
     <input type="checkbox" id="erikois1" name="laktoositon" value="Laktoositon">
     <label for="vehicle1"> Laktoositon</label><br>
     <input type="checkbox" id="erikois2" name="gluteeniton" value="Gluteeniton">
@@ -25,7 +25,7 @@
     <div class="aineet" id="hakukysely">
         <h1>Resepti sisältää</h1>
         <div autocomplete="off" class="autocomplete" style="width:300px;"></div>
-            <input onkeypress="return /[a-ö]/i.test(event.key)" type="text" id="r-aineInput" name="raaka-aine" maxlength="25" placeholder="Lisää raaka-aine">
+            <input onkeypress="return /[a-ö]/i.test(event.key)" type="text" id="r-aineInput" name="raaka-aine" maxlength="25" placeholder="Lisää raaka-aine" autocomplete="off">
             <button type="button" id="lisääaines" onclick="lisaaAines()">Lisää</button>
         </div>
         <div id="valitut-ainekset">
@@ -35,7 +35,7 @@
 
 </form>
 
-
+<div id=resepti><a href='index.html'>Takaisin reseptihakuun</a></div>
 
     <script src="js/manage.js"></script>
 </body>

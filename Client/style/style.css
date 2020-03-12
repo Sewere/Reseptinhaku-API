@@ -1,0 +1,45 @@
+body{
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    text-align: center;
+    margin:auto;
+}
+input {
+    padding: 6px 6px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+input[type=text] {
+    width: 30%;
+}
+
+input[type=text]:focus {
+    background-color: #e0ffe1;
+    border: 1px solid #bbc5fa; 
+    width: 30%;
+}
+
+#resepti{
+    margin-top: 100px;
+}
+a{
+    color: black;
+    border: 2px solid #4CAF50;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 20px;
+    background-color: rgb(239, 255, 245);
+}
+ /* unvisited link */
+ a:link {
+    color: green;
+  }
+  
+  /* mouse over link */
+  a:hover {
+    color: black;
+    background-color: rgb(146, 181, 255);
+  }
+
