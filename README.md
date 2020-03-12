@@ -16,9 +16,12 @@ Juureen hakuja tehdessä palautuu koodi 404 sekä viesti 'Wrong endpoint!'.
 # GET
 Reseptien haku kriteereillä:
 
-    Palauttaa kaikki reseptit JSONINA
+   Palauttaa kaikki reseptit JSONINA
+    
     http://localhost:8081/haku
-    palautuksen JSON-muoto:
+    
+   palautuksen JSON-muoto:
+   
     [
         {
             "ReseptiId": 17,
