@@ -70,7 +70,28 @@ app.post('/lisaa/', async function(req, res){
         }
     }
 });
+//DELETE poista resepti
+app.delete('/poista', async function(req, res){
+    //DELETE: http://localhost:8081/poista?url=http://www.pieru.fi
+    let kysely = req.query;
+    console.log("Koko kysely:");
+    console.log(kysely);
+    const poistettava = req.query["url"];
+    console.log(poistettava);
+
+    let SQLtulos = await db.deleteResepti(poistettava);
+    console.log("SQL Hakutulokset:");
+    console.log(SQLtulos);
+    if (SQLtulos == false){
+        res.status(400).send("Reseptejä ei löytynyt.");
+    } else {
+        res.send("Resepti poistettu onnistuneesti!");
+    }
+});
 //Ei sallitut tavat
+app.all('/', function(req, res){
+    res.status(404).send('Wrong endpoint!');
+});
 app.all('/lisaa/', function(req, res){
     res.status(405).send('Allowed methods: POST');
 });
@@ -82,6 +103,9 @@ app.all('/haku/reseptit', function(req, res){
 });
 app.all('/haku/ainekset', function(req, res){
     res.status(405).send('Allowed methods: GET');
+});
+app.all('/poista', function(req, res){
+    res.status(405).send('Allowed methods: DELETE');
 });
 var server = app.listen(8081, function () {
     var host = server.address().address;
