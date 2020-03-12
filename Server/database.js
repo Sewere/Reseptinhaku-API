@@ -212,9 +212,41 @@ async function getReseptiKriteerein(kriteerit){
     return reseptiLista;
 }
 
+async function deleteResepti(reseptiUrl){
+    let haettuResepti;
+    // Haetaan resepti urlin perusteella
+    try {
+        haettuResepti = await query('SELECT * FROM reseptit WHERE Resepti IN (?)', [reseptiUrl]);
+        console.log(haettuResepti);
+    } catch (err){
+        console.log("Reseptiä ei löytynyt");
+        return false;
+    }
+
+    // Poistetaan linkitykset haetun reseptin id:n perusteella
+    try {
+        await query('DELETE FROM kuuluu WHERE Rid IN (?)', [haettuResepti.ReseptiId]);
+        console.log("Linkit poistettu.");
+    } catch (err) {
+        console.log("Linkkien poisto epäonnistui.");
+        return false;
+    }
+
+    // Poistetaan resepti reseptit taulusta
+    try {
+        await query('DELETE FROM reseptit WHERE ReseptiId IN (?)', [haettuResepti.ReseptiId]);
+        console.log("Resepti poistettu.");
+    } catch (err) {
+        console.log("Reseptin poisto epäonnistui.");
+        return false;
+    }
+    return true;
+}
+
 module.exports = {
     createResepti,
     getAinekset,
     getReseptit,
-    getReseptiKriteerein
+    getReseptiKriteerein,
+    deleteResepti
 };
