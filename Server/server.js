@@ -22,7 +22,12 @@ app.get('/haku/', async function(req, res){
     const erityisLista = req.query["erityis"];
 
     let jsonKysely = kyselynMuodostus(ainesLista, rajausLista, erityisLista);
-    let SQLtulos = await db.getReseptiKriteerein(jsonKysely);
+    let SQLtulos;
+    try {
+        SQLtulos = await db.getReseptiKriteerein(jsonKysely);
+    } catch (err) {
+        res.status(500).send("Tietokantaan ei saatu yhteyttä.");
+    }
     console.log("SQL Hakutulokset:");
     console.log(SQLtulos);
     if (SQLtulos === undefined){
@@ -33,12 +38,23 @@ app.get('/haku/', async function(req, res){
 });
 //GET kaikki reseptit
 app.get('/haku/reseptit', async function(req, res){
-    let SQLtulos = await db.getReseptit();
+    let SQLtulos;
+    try {
+        SQLtulos = await db.getReseptit();
+    } catch (err) {
+        res.status(500).send("Tietokantaan ei saatu yhteyttä.");
+    }
     res.send(SQLtulos);
 });
 //GET kaikki ainekset
 app.get('/haku/ainekset', async function(req, res){
-    let SQLtulos = await db.getAinekset(null);
+    let SQLtulos;
+    try {
+        SQLtulos = await db.getAinekset(null);
+    } catch (err) {
+        res.status(500).send("Tietokantaan ei saatu yhteyttä.");
+    }
+
     res.send(SQLtulos);
 });
 //POST lisää
@@ -59,7 +75,12 @@ app.post('/lisaa/', async function(req, res){
         console.log("Erikoisruokavalion muoto väärä");
         res.status(400).send("Erityisruokavalioiden muoto ei kelpaa.");
     } else {
-        let tulos = await db.createResepti(jsonPost);
+        let tulos;
+        try {
+            tulos = await db.createResepti(jsonPost);
+        } catch (err) {
+            res.status(500).send("Tietokantaan ei saatu yhteyttä.");
+        }
         if(tulos){
             console.log("Resepti luotu tietokantaan!");
             res.send("Reseptin lisätty tietokantaan.");
