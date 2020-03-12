@@ -213,34 +213,42 @@ async function getReseptiKriteerein(kriteerit){
 }
 
 async function deleteResepti(reseptiUrl){
-    let haettuResepti;
+    let haettuResepti, reseptinId;
     // Haetaan resepti urlin perusteella
     try {
         haettuResepti = await query('SELECT * FROM reseptit WHERE Resepti IN (?)', [reseptiUrl]);
-        console.log(haettuResepti);
+        console.log(haettuResepti[0].ReseptiId);
+        reseptinId = haettuResepti[0].ReseptiId;
+        console.log("Pitäis olla täs");
     } catch (err){
         console.log("Reseptiä ei löytynyt");
         return false;
     }
 
+    if (reseptinId !== undefined) {
     // Poistetaan linkitykset haetun reseptin id:n perusteella
-    try {
-        await query('DELETE FROM kuuluu WHERE Rid IN (?)', [haettuResepti.ReseptiId]);
-        console.log("Linkit poistettu.");
-    } catch (err) {
-        console.log("Linkkien poisto epäonnistui.");
-        return false;
-    }
+        try {
+            const palaute = await query('DELETE FROM kuuluu WHERE Rid = '+reseptinId);
+            console.log(palaute);
+            console.log("Linkit poistettu.");
+        } catch (err) {
+            console.log("Linkkien poisto epäonnistui.");
+            return false;
+        }
 
-    // Poistetaan resepti reseptit taulusta
-    try {
-        await query('DELETE FROM reseptit WHERE ReseptiId IN (?)', [haettuResepti.ReseptiId]);
-        console.log("Resepti poistettu.");
-    } catch (err) {
-        console.log("Reseptin poisto epäonnistui.");
+        // Poistetaan resepti reseptit taulusta
+        try {
+            await query('DELETE FROM reseptit WHERE ReseptiId = '+reseptinId);
+            console.log("Resepti poistettu.");
+        } catch (err) {
+            console.log("Reseptin poisto epäonnistui.");
+            return false;
+        }
+        return true;
+    } else {
+        console.log("Reseptiä ei löytynyt.");
         return false;
     }
-    return true;
 }
 
 module.exports = {
