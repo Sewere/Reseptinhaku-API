@@ -79,12 +79,40 @@ function lisaaAines(){
         document.getElementById("r-aineInput").value = "";
     }
 }
+var valitutainekset = [];
+function lisaaAines2(){
+    if(document.getElementById("r-aineInput").value != ""
+    && !hakuaineet.includes(document.getElementById("r-aineInput").value)
+    && raakaAineet.includes(document.getElementById("r-aineInput").value)){
+        document.getElementById("valitut-ainekset").innerHTML = valitutainekset;
+        valitutainekset.push(document.getElementById("r-aineInput").value);
+        console.log(valitutainekset);
+        document.getElementById("valitut-ainekset").innerHTML = valitutainekset;
+        var aines = document.getElementById("r-aineInput").value;
+        hakuaineet.push(aines.innerHTML);
+        
+    }
+}
+function lisaaAines3(){
+    if(document.getElementById("r-aineInput").value != ""
+    && !hakuaineet.includes(document.getElementById("r-aineInput").value)
+    && raakaAineet.includes(document.getElementById("r-aineInput").value)){
+        var aineslista = document.getElementById("valitut-ainekset");
+        var aines = document.createElement("li");
+        aines.innerHTML = document.getElementById("r-aineInput").value;
+        aineslista.appendChild(aines);
+        console.log("Aines " + aines.innerHTML + " lisätty");
+        hakuaineet.push(aines.innerHTML);
+        document.getElementById("r-aineInput").value = "";
+        console.log(hakuaineet);
+    }
+}
 function rajaaAines(){
     if(document.getElementById("rajaus-input").value != ""
     && !rajatutaineet.includes(document.getElementById("rajaus-input").value)
     && raakaAineet.includes(document.getElementById("rajaus-input").value)){
         var aineslista = document.getElementById("rajatut-ainekset");
-        var aines = document.createElement("p");
+        var aines = document.createElement("li");
         aines.innerHTML = document.getElementById("rajaus-input").value;
         aineslista.appendChild(aines);
         console.log("rajaus " + aines.innerHTML + " lisätty");
@@ -173,7 +201,25 @@ window.onload = function() {
     xhttp.open("GET", "http://localhost:8081/haku/ainekset", true);
     xhttp.send();
 };
+document.getElementById("valitut-ainekset").addEventListener("click",function(e) {
+    var tgt = e.target;
+    var tgtnimi = tgt.textContent;
+    if (tgt.tagName.toUpperCase() == "LI") {
+        tgt.parentNode.removeChild(tgt);
+        var index = hakuaineet.indexOf(tgtnimi);
+        if (index !== -1) hakuaineet.splice(index, 1);
 
+    }
+});
+document.getElementById("rajatut-ainekset").addEventListener("click",function(e) {
+    var tgt = e.target;
+    var tgtnimi = tgt.textContent;
+    if (tgt.tagName.toUpperCase() == "LI") {
+        tgt.parentNode.removeChild(tgt);
+        var index = rajatutaineet.indexOf(tgtnimi);
+        if (index !== -1) rajatutaineet.splice(index, 1);
+    }
+});
 
 autocomplete(document.getElementById("r-aineInput"), raakaAineet);
 autocomplete(document.getElementById("rajaus-input"), raakaAineet);

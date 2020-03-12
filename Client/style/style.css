@@ -42,4 +42,11 @@ a{
     color: black;
     background-color: rgb(146, 181, 255);
   }
+  li {
+    display: inline;
+    margin-right: 10px;
+    border: 1px solid #000;
+}
+
+  
 

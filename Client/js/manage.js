@@ -27,9 +27,14 @@ function reseptinLisaaminen(){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log("tähän myöhemmin jotai kivaa");
-
+            var xy = document.getElementById("onnistu");
+            xy.innerHTML = "Reseptin lisätty";
+            xx.innerHTML ="";
         } else if(this.status == 400){
             console.log("Väärä kutsutyyppi");
+            var xx = document.getElementById("errori");
+            xx.innerHTML = "Reseptin lisääminen epäonnistui";
+            xy.innerHTML ="";
         }else{
             console.log("täällä");
         }
@@ -43,7 +48,7 @@ function reseptinLisaaminen(){
 function lisaaAines(){
     if(document.getElementById("r-aineInput").value != ""){
         var aineslista = document.getElementById("valitut-ainekset");
-        var aines = document.createElement("p");
+        var aines = document.createElement("li");
         aines.innerHTML = document.getElementById("r-aineInput").value;
         aineslista.appendChild(aines);
         console.log("Aines " + aines.innerHTML + " lisätty");
@@ -118,5 +123,15 @@ window.onload = function() {
     xhttp.open("GET", "http://localhost:8081/haku/ainekset", true);
     xhttp.send();
 };
+
+document.getElementById("valitut-ainekset").addEventListener("click",function(e) {
+    var tgt = e.target;
+    var tgtnimi = tgt.textContent;
+    if (tgt.tagName.toUpperCase() == "LI") {
+        tgt.parentNode.removeChild(tgt);
+        var index = hakuaineet.indexOf(tgtnimi);
+        if (index !== -1) hakuaineet.splice(index, 1);
+    }
+});
 
 autocomplete(document.getElementById("r-aineInput"), raakaAineet);
