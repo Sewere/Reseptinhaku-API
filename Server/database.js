@@ -217,9 +217,8 @@ async function deleteResepti(reseptiUrl){
     // Haetaan resepti urlin perusteella
     try {
         haettuResepti = await query('SELECT * FROM reseptit WHERE Resepti IN (?)', [reseptiUrl]);
-        console.log(haettuResepti[0].ReseptiId);
         reseptinId = haettuResepti[0].ReseptiId;
-        console.log("Pitäis olla täs");
+        console.log("Resepti haettu, id: "+reseptinId);
     } catch (err){
         console.log("Reseptiä ei löytynyt");
         return false;
@@ -228,8 +227,7 @@ async function deleteResepti(reseptiUrl){
     if (reseptinId !== undefined) {
     // Poistetaan linkitykset haetun reseptin id:n perusteella
         try {
-            const palaute = await query('DELETE FROM kuuluu WHERE Rid = '+reseptinId);
-            console.log(palaute);
+            await query('DELETE FROM kuuluu WHERE Rid = '+reseptinId);
             console.log("Linkit poistettu.");
         } catch (err) {
             console.log("Linkkien poisto epäonnistui.");
