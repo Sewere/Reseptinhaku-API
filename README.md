@@ -15,6 +15,7 @@ Juureen hakuja tehdessä palautuu koodi 404 sekä viesti 'Wrong endpoint!'.
 
 # GET
 Reseptien haku kriteereillä:
+
     Palauttaa kaikki reseptit JSONINA
     http://localhost:8081/haku
     palautuksen JSON-muoto:
@@ -36,19 +37,25 @@ Reseptien haku kriteereillä:
             "Gluteeniton": 0
         }
     ]
+    
     Jos aineksilla ei löydy reseptejä, palautuu viesti "Reseptejä ei löytynyt." ja vikakoodi 400.
 
     Aineksilla hakeminen
+    
     Palauttaa yllä olevan JSONin jossa on kaikki reseptit joissa mikä tahansa aineksista sisältyy.
         haku?aines=porkkana,peruna
+        
     Aineksilla rajaaminen
         haku?rajaus=sipuli,sieni
+        
     Erityisruokavalioilla rajaaminen
         haku?erityis=laktoositon,gluteeniton,vegaaninen
+        
 # GET
 Kaikki reseptit:
     http://localhost:8081/haku/reseptit
     Palauttaa kaikki reseptit yllä näkyvässä JSON-muodossa.
+    
 # GET
 Kaikki ainekset:
     http://localhost:8081/haku/ainekset
@@ -66,14 +73,21 @@ Kaikki ainekset:
 
 #POST
 Uuden reseptin lisääminen:
+
     http://localhost:8081/lisaa
+    
     Lähetettävän reseptin JSON-muoto:
-    {"resepti":{"nimi":"Reseptin nimi","resepti":"http://www.reseptin-osoite.fi","vegaaninen":1,"laktoositon":1,"gluteeniton":0,"ainekset":["porkkana","peruna"]}}
+    
+    {"resepti":{"nimi":"Reseptin nimi","resepti":"http://www.reseptin-                    osoite.fi","vegaaninen":1,"laktoositon":1,"gluteeniton":0,"ainekset":["porkkana","peruna"]}}
 
     Palauttaa epäonnistuneesta kutsusta viestin "Reseptin luonti epäonnistui" ja HTML-koodin 400.
     Onnistuneesta "Resepti lisätty tietokantaan."
+    
 #DELETE
+
 Reseptin poistaminen:
+
     http://localhost:8081/poista?url=http://resepti.fi/
+    
     Palauttaa onnistuneesta poistosta viestin "Resepti poistettu onnistuneesti!".
     Epäonnistuneesta poistosta palautuu "Reseptejä ei löytynyt." ja vikakoodi 400.
