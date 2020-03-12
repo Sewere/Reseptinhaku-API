@@ -1,7 +1,9 @@
 # Reseptinhaku-API
 Avoimien rajapintojen projekti
 
-Tietokannan luonti-tiedosto sisältää vaadittavan tietokantarakenteen sivuston toimimiseksi.
+API on tarkoitettu reseptien hakuun ainesosien perusteella.
+
+Tietokannan luonti-tiedosto sisältää vaadittavan tietokantarakenteen sivuston toimimiseksi sekä muutaman reseptin lisäyksen.
 
 # REST-kutsut
 Kaikista onnistuneista hauista palautuu HTML-koodi 200.
@@ -37,6 +39,7 @@ Reseptien haku kriteereillä:
     Jos aineksilla ei löydy reseptejä, palautuu viesti "Reseptejä ei löytynyt." ja vikakoodi 400.
 
     Aineksilla hakeminen
+    Palauttaa yllä olevan JSONin jossa on kaikki reseptit joissa mikä tahansa aineksista sisältyy.
         haku?aines=porkkana,peruna
     Aineksilla rajaaminen
         haku?rajaus=sipuli,sieni
@@ -68,7 +71,7 @@ Uuden reseptin lisääminen:
     {"resepti":{"nimi":"Reseptin nimi","resepti":"http://www.reseptin-osoite.fi","vegaaninen":1,"laktoositon":1,"gluteeniton":0,"ainekset":["porkkana","peruna"]}}
 
     Palauttaa epäonnistuneesta kutsusta viestin "Reseptin luonti epäonnistui" ja HTML-koodin 400.
-    Onnistuneesta "Reseptin lisätty tietokantaan."
+    Onnistuneesta "Resepti lisätty tietokantaan."
 #DELETE
 Reseptin poistaminen:
     http://localhost:8081/poista?url=http://resepti.fi/
